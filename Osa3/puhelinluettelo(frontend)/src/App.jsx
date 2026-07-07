@@ -57,7 +57,8 @@ const App = () => {
     )
 
     if (numberExists) {
-      alert(`${trimmedNumber} is already added to phonebook`)
+      setErrorMessage(`${trimmedNumber} is already added to phonebook`)
+      setTimeout(() => setErrorMessage(null), 5000)
       return
     }
 
@@ -81,12 +82,16 @@ const App = () => {
         setPersons(persons.concat(returnedPersons))
         setNewName('')
         setNewNumber('')
+        setAlert(`${trimmedName} was added successfully`)
+        setTimeout(() => {
+          setAlert(null)
+        }, 5000)
       })
-
-    setAlert(`${trimmedName} was added successfully`)
-    setTimeout(() => {
-      setAlert(null)
-    }, 5000)
+      .catch(error => {
+        const errorMessage = error.response?.data?.error || error.response?.data || 'Validation failed'
+        setErrorMessage(errorMessage)
+        setTimeout(() => setErrorMessage(null), 5000)
+      })
   }
 
   const handleReplaceNumber = (trimmedName, trimmedNumber) =>{
@@ -100,18 +105,21 @@ const App = () => {
 
     personsService
       .update(personToUpdate.id, updatedPerson)
-      .catch(error =>{
-        setErrorMessage(
-          `Person ${updatedPerson.name} was already deleted from the server`
-        )
-        setTimeout(() => {
-          setErrorMessage(null)
-        }, 5000)
-      })
-      .then(() => {
+      .then(returnedPerson => {
         setPersons(persons.map(person =>
-          person.id === personToUpdate.id ? { ...person, number: trimmedNumber } : person
+          person.id === personToUpdate.id ? returnedPerson : person
         ))
+        setAlert(`${trimmedName} was updated successfully`)
+        setTimeout(() => {
+          setAlert(null)
+        }, 5000)
+        setNewName('')
+        setNewNumber('')
+      })
+      .catch(error => {
+        const errorMessage = error.response?.data?.error || error.response?.data || 'Validation failed'
+        setErrorMessage(`${errorMessage}`)
+        setTimeout(() => setErrorMessage(null), 5000)
       })
   }
 
