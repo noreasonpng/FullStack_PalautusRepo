@@ -1,0 +1,34 @@
+{
+  "anecdotes": [
+    {
+      "id": "1",
+      "content": "This is an anecdote",
+      "likes": 0,
+      "votes": 5
+    },
+    {
+      "id": "2",
+      "content": "This is another anecdote",
+      "likes": 0,
+      "votes": 4
+    },
+    {
+      "id": "3",
+      "content": "This is a third anecdote",
+      "likes": 0,
+      "votes": 20
+    },
+    {
+      "content": "This is a fourth anecdote",
+      "important": false,
+      "id": "-RQNipIb794",
+      "votes": 8
+    },
+    {
+      "content": "This is a fifth anecdote",
+      "important": false,
+      "id": "ZaJhLGDCn8Q"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
