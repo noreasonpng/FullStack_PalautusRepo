@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Link, Navigate, useNavigate } from 'react-router-dom'
+import {Container, AppBar, Toolbar, Button} from '@mui/material'
 import BlogList from './components/BlogList'
 import LoginForm from './components/LoginForm'
 import BlogView from './components/BlogView.jsx'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import BlogCreationForm from './components/BlogCreationForm.jsx'
+import Notification from './components/Notification.jsx'
 
 const AppContent = () => {
   const [user, setUser] = useState(null)
@@ -16,6 +18,8 @@ const AppContent = () => {
   const [blogs, setBlogs] = useState([])
   const [alert, setAlert] = useState(null)
   const [blogErrorMessage, setBlogErrorMessage] = useState(null)
+
+  const [notification, setNotification] = useState(null)
 
   const navigate = useNavigate()
 
@@ -43,8 +47,8 @@ const AppContent = () => {
       setPassword('')
       navigate('/')
     } catch {
-      setErrorMessage('Wrong credentials')
-      setTimeout(() => setErrorMessage(null), 5000)
+      setNotification({message: 'Wrong credentials', type: 'error'})
+      setTimeout(() => setNotification(null), 5000)
     }
   }
 
@@ -57,8 +61,8 @@ const AppContent = () => {
   const handleBlogCreate = async blogObject => {
     const createdBlog = await blogService.create(blogObject)
     setBlogs(blogs.concat(createdBlog))
-    setAlert(`A new blog: ${blogObject.title} by ${blogObject.author}, was added successfully`)
-    setTimeout(() => setAlert(null), 5000)
+    setNotification({message:`A new blog: ${blogObject.title} by ${blogObject.author}, was added successfully`, type:'success'})
+    setTimeout(() => setNotification(null), 5000)
     navigate('/')
   }
 
@@ -98,22 +102,32 @@ const AppContent = () => {
     }
   }
 
-  const padding = { padding: 5 }
-
   return (
-    <div>
-      <div>
-        <Link style={padding} to="/">home</Link>
-        {user === null
-          ? <Link style={padding} to="/login">Login</Link>
-          : (
+    <Container>
+      <AppBar position="static">
+        <Toolbar>
+          <Button color="inherit" component={Link} to="/">
+            home
+          </Button>
+
+          {user === null ? (
+            <Button color="inherit" component={Link} to="/login">
+              Login
+            </Button>
+          ) : (
             <>
-              <Link style={padding} to="/create">new blog</Link>
-              <button onClick={handleLogout}>logout</button>
+              <Button color="inherit" component={Link} to="/create">
+                new blog
+              </Button>
+          
+              <Button color="inherit" onClick={handleLogout}>
+                logout
+              </Button>
             </>
-          )
-        }
-      </div>
+          )}
+        </Toolbar>
+      </AppBar>
+      <Notification notification={notification}/>
       <Routes>
         <Route
           path="/"
@@ -158,7 +172,7 @@ const AppContent = () => {
           }
         />
       </Routes>
-    </div>
+    </Container>
   )
 }
 
